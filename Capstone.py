@@ -110,8 +110,9 @@ st.write("Berdasarkan Handbook of Energy & Economic Statistics of Indonesia 2021
 #------------------------------------------------------------------------------------------------------
 # Ambil Data dan Tabel ------------> Gambar 2
 df2 = pd.read_csv('primary_energy_source_bar.csv')
+df2.rename({'Entity':'Country'}, axis='columns', inplace = True)
 df2 = df2[(df2['Year']>=2000)] # lebih besar dari tahun 2000
-df2_1 = df2[(df2['Entity']=='Indonesia')].tail(10).reset_index().drop(['index','Code'], axis=1)
+df2_1 = df2[(df2['Country']=='Indonesia')].tail(10).reset_index().drop(['index','Code'], axis=1)
 
 #------------------------------------------------------------------------------------------------------
 st.write('Energi terbarukan yang dihasilkan oleh Indonesia dapat dilihat pada tabel di bawah ini. '
@@ -156,13 +157,13 @@ st.write('Jika dibandingkan dengan negara lain, penggunaan konsumsi energi yang 
 
 #------------------------------------------------------------------------------------------------------
 df2['Country_Code'] = 0.1  #untuk area scatter
-df2 = df2[df2['Entity']
+df2 = df2[df2['Country']
 			  .str.contains("World|High-income countries|Non-OECD (BP)|OECD (BP)|Asia|Asia Pacific (BP)|"
 							"Upper-middle-income countries|North America|North America (BP)|Europe|"
 							"European Union (27)|Lower-middle-income countries|Middle East (BP)|"
 							"South and Central America (BP)|South America|CIS (BP)|Africa (BP)|Africa|"
 							"Other Africa (BP)") == False]
-df2.loc[df2.Entity == 'Indonesia', 'Country_Code'] = 5
+df2.loc[df2.Country == 'Indonesia', 'Country_Code'] = 5
 fig2, axs2 = plt.subplots(3, 2)
 (ax2_1, ax2_2), (ax2_3, ax2_4), (ax2_5, ax2_6) = axs2
 area2 = df2['Country_Code']
