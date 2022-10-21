@@ -11,7 +11,7 @@ st.set_page_config(page_title='Renewable Energy')
 
 # ------------------------------------------------------------------------------------------------------
 # st.title("Kebutuhan Energi Terbarukan di Indonesia")
-st.markdown("<h1 style='text-align: center; color: blue;'>Kebutuhan Energi Terbarukan di Indonesia</h1>",
+st.markdown("<h1 style='text-align: center; color: #0073FF;'>Kebutuhan Energi Terbarukan di Indonesia</h1>",
             unsafe_allow_html=True)
 st.caption("by Kevin F Levandusky")
 # image = 'https://drive.google.com/file/d/1qFnIu6VTp19aaWKZaWyH5VHejAGDxkEd/view?usp=sharing'
@@ -61,7 +61,6 @@ line_widths1 = [6, 2.1, 3, 2.1, 3]
 lp1 = df1.plot(x='Period', kind="line", ax=ax1, ylim=[-0.3, 12], color=colors1, yticks=[0, 2, 4, 6, 8, 10, 12])
 add_lbl_pos1 = [0.5, 1.0, -0.1, -0.3, 0.5]
 
-# Gambar garis
 for i, item in enumerate(lp1.get_lines()):
     item.set_linewidth(line_widths1[i])
     lbl = item.get_label()
@@ -165,72 +164,55 @@ st.markdown('Dari gambar di bawah ini, jika dibandingkan dengan negara lain, kon
 
 # ------------------------------------------------------------------------------------------------------
 df2['Country_Code'] = 0.4  # untuk area scatter
-df2 = df2[df2['Entity'] \
-              .str.contains("World|High-income countries|Non-OECD (BP)|OECD (BP)|Asia|Asia Pacific (BP)|"
-                            "Upper-middle-income countries|North America|North America (BP)|Europe|"
-                            "European Union (27)|Lower-middle-income countries|Middle East (BP)|"
-                            "South and Central America (BP)|South America|CIS (BP)|Africa (BP)|Africa|"
-                            "Other Africa (BP)") == False]
 df2.loc[df2.Entity == 'Indonesia', 'Country_Code'] = 15
-fig2_1, ax2_1 = plt.subplots(1, 1, figsize=(7, 4))
-fig2_2, ax2_2 = plt.subplots(1, 1, figsize=(7, 4))
-fig2_3, ax2_3 = plt.subplots(1, 1, figsize=(7, 4))
-fig2_4, ax2_4 = plt.subplots(1, 1, figsize=(7, 4))
-fig2_5, ax2_5 = plt.subplots(1, 1, figsize=(7, 4))
-fig2_6, ax2_6 = plt.subplots(1, 1, figsize=(7, 4))
-# (ax2_1, ax2_2, ax2_3, ax2_4, ax2_5, ax2_6) = axs2
-area2 = df2['Country_Code']
+df2['Entity'] = df2['Entity'].astype('string')
+print(df2.tail())
+discard2 = ["World", "High-income countries", "Non-OECD (BP)", "OECD (BP)", "Asia", "Asia Pacific (BP)",
+            "Upper-middle-income countries", "North America", "North America (BP)", "Europe",
+            "European Union (27)", "Lower-middle-income countries", "Middle East (BP)",
+            "South and Central America (BP)", "South America", "CIS (BP)", "Africa (BP)", "Africa",
+            "Other Africa (BP)"]
+df2_ = df2[~df2.Entity.str.contains('|'.join(discard2))]
 colors2 = {0.4: 'gray', 15: 'blue'}
-ax2_1.scatter(x=df2['Year'], y=df2['Coal Consumption - TWh'], s=area2, color=df2['Country_Code'].map(colors2))
-ax2_1.set_title('Coal', fontsize=11)
-ax2_2.scatter(x=df2['Year'], y=df2['Oil Consumption - TWh'], s=area2, color=df2['Country_Code'].map(colors2))
-ax2_2.set_title('Oil', fontsize=11)
-ax2_3.scatter(x=df2['Year'], y=df2['Hydro Consumption - TWh'], s=area2, color=df2['Country_Code'].map(colors2))
-ax2_3.set_title('Hydro', fontsize=11)
-ax2_4.scatter(x=df2['Year'], y=df2['Wind Consumption - TWh'], s=area2, color=df2['Country_Code'].map(colors2))
-ax2_4.set_title('Wind', fontsize=11)
-ax2_5.scatter(x=df2['Year'], y=df2['Solar Consumption - TWh'], s=area2, color=df2['Country_Code'].map(colors2))
-ax2_5.set_title('Solar', fontsize=11)
-ax2_6.scatter(x=df2['Year'], y=df2['Geo Biomass Other - TWh'], s=area2, color=df2['Country_Code'].map(colors2))
-ax2_6.set_title('Other', fontsize=11)
-fig2_1.suptitle("Energi yang Dikonsumsi Berdasarkan Jenis Sumber Daya", fontsize=14)
-fig2_1.supylabel('Energi Luaran (TeraWattHour)', fontsize=12)
-fig2_1.supxlabel('Tahun\n\n'
-                 'Sumber: https://ourworldindata.org/energy, akses: 24 Sep 22', x=0.5, y=0.02, size=10)
-fig2_1.tight_layout()
-fig2_2.suptitle("Energi yang Dikonsumsi Berdasarkan Jenis Sumber Daya", fontsize=14)
-fig2_2.supylabel('Energi Luaran (TeraWattHour)', fontsize=12)
-fig2_2.supxlabel('Tahun\n\n'
-                 'Sumber: https://ourworldindata.org/energy, akses: 24 Sep 22', x=0.5, y=0.02, size=10)
-fig2_2.tight_layout()
-fig2_3.suptitle("Energi yang Dikonsumsi Berdasarkan Jenis Sumber Daya", fontsize=14)
-fig2_3.supylabel('Energi Luaran (TeraWattHour)', fontsize=12)
-fig2_3.supxlabel('Tahun\n\n'
-                 'Sumber: https://ourworldindata.org/energy, akses: 24 Sep 22', x=0.5, y=0.02, size=10)
-fig2_3.tight_layout()
-fig2_4.suptitle("Energi yang Dikonsumsi Berdasarkan Jenis Sumber Daya", fontsize=14)
-fig2_4.supylabel('Energi Luaran (TeraWattHour)', fontsize=12)
-fig2_4.supxlabel('Tahun\n\n'
-                 'Sumber: https://ourworldindata.org/energy, akses: 24 Sep 22', x=0.5, y=0.02, size=10)
-fig2_4.tight_layout()
-fig2_5.suptitle("Energi yang Dikonsumsi Berdasarkan Jenis Sumber Daya", fontsize=14)
-fig2_5.supylabel('Energi Luaran (TeraWattHour)', fontsize=12)
-fig2_5.supxlabel('Tahun\n\n'
-                 'Sumber: https://ourworldindata.org/energy, akses: 24 Sep 22', x=0.5, y=0.02, size=10)
-fig2_5.tight_layout()
-fig2_6.suptitle("Energi yang Dikonsumsi Berdasarkan Jenis Sumber Daya", fontsize=14)
-fig2_6.supylabel('Energi Luaran (TeraWattHour)', fontsize=12)
-fig2_6.supxlabel('Tahun\n\n'
-                 'Sumber: https://ourworldindata.org/energy, akses: 24 Sep 22', x=0.5, y=0.02, size=10)
-fig2_6.tight_layout()
-# st.pyplot(fig2, clear_figure=False)
-tab2_1, tab2_2, tab2_3, tab2_4, tab2_5, tab2_6 = st.tabs(["Batubara", "Minyak", 'Air', ' Angin', 'Surya', 'Lainnya'])
-tab2_1.pyplot(fig2_1)
-tab2_2.pyplot(fig2_2)
-tab2_3.pyplot(fig2_3)
-tab2_4.pyplot(fig2_4)
-tab2_5.pyplot(fig2_5)
-tab2_6.pyplot(fig2_6)
+area2 = df2_['Country_Code']
+type2 = ['Coal Consumption - TWh', 'Oil Consumption - TWh', 'Gas Consumption - TWh', 'Hydro Consumption - TWh',
+         'Wind Consumption - TWh', 'Solar Consumption - TWh', 'Geo Biomass Other - TWh']
+title2 = ['Coal', 'Oil', 'Gas', 'Hydro', 'Wind', 'Solar', 'Other']
+
+
+def figure2(tipe2, title):
+    fig, axs = plt.subplots(1, 1, figsize=(7, 4))
+    axs.scatter(x=df2_['Year'],
+                y=df2_[tipe2],
+                s=area2,
+                color=df2_['Country_Code'].map(colors2))
+    axs.set_title(title, fontsize=13)
+    axs.xaxis.set_major_locator(MaxNLocator(integer=True))
+    fig.legend(['Legend:\nBiru = Indonesia'], loc=(0.79, 0.8), fontsize=8)
+    fig.suptitle("Energi yang Dikonsumsi Berdasarkan Jenis Sumber Daya", fontsize=14)
+    fig.supylabel('Jumlah Energi (TeraWatthour)', fontsize=12, ha='center')
+    fig.supxlabel('Tahun\n\n'
+                  'Sumber: https://ourworldindata.org/energy, akses: 24 Sep 22', x=0.5, y=0.02, size=10)
+    fig.tight_layout()
+    st.pyplot(fig)
+
+
+tab2_0, tab2_1, tab2_2, tab2_3, tab2_4, tab2_5, tab2_6 = st.tabs(["Batubara", "Minyak", 'Gas', 'Air',
+                                                                  'Angin', 'Surya', 'Lainnya'])
+with tab2_0:
+    figure2(type2[0], title2[0])
+with tab2_1:
+    figure2(type2[1], title2[1])
+with tab2_2:
+    figure2(type2[2], title2[2])
+with tab2_3:
+    figure2(type2[3], title2[3])
+with tab2_4:
+    figure2(type2[4], title2[4])
+with tab2_5:
+    figure2(type2[5], title2[5])
+with tab2_6:
+    figure2(type2[6], title2[6])
 
 # ------------------------------------------------------------------------------------------------------
 st.markdown('Energi yang digunakan dan dikonsumsi Indonesia memang terlihat tidak besar dibandingkan negara '
@@ -255,37 +237,22 @@ st.markdown('Jika melihat dari data persentase energi terbarukan Indonesia masih
 # url3 = 'https://drive.google.com/uc?id=' + renewable_share_energy.split('/')[-2]
 df3 = pd.read_csv('renewable_share_energy.csv')
 df3.rename({'Renewables (% equivalent primary energy)': '%Renewable'}, axis='columns', inplace=True)
-df3topcountry = (df3.groupby(['Entity'])['%Renewable']
-                 .max()
-                 .reset_index()
-                 .sort_values(by='%Renewable', ascending=False)
-                 .head(5))
-df3_pilihan = df3[df3['Entity'].str.contains("Norway|Indonesia|Iceland|World|Turkey") == True]
-df3_1 = pd.concat([df3topcountry, df3_pilihan])
+# df3_1 = df3[df3['Entity'].str.contains("Norway|Indonesia|Iceland|World|Turkey") == True]
+choose3 = ["Norway", "Indonesia", "Iceland", "World", "Turkey"]
+df3_ = df3[df3.Entity.str.contains('|'.join(choose3))]
+
 fig3, ax3 = plt.subplots(1, 1, figsize=(14, 7))
 colors3 = ["tab:pink", "darkblue", "tab:cyan", "tab:gray", "tab:red"]
-df3_1.groupby(['Year', 'Entity'])['%Renewable'].sum().unstack().plot(kind='line', ax=ax3, marker='.', color=colors3)
-ax3.annotate('Iceland', xy=(2020, 86),
-             xytext=(2020, 93),
-             fontweight="bold", fontsize=12, color='tab:pink', va="center",
-             arrowprops={"arrowstyle": "-", "color": 'tab:pink'})
-ax3.annotate('Indonesia', xy=(2020, 10),
-             xytext=(2020, 1),
-             fontweight="bold", fontsize=12, color='darkblue', va="center",
-             arrowprops={"arrowstyle": "-", "color": 'darkblue'})
-ax3.annotate('Norwegia', xy=(2020, 71),
-             xytext=(2020, 65),
-             fontweight="bold", fontsize=12, color='tab:cyan', va="center",
-             arrowprops={"arrowstyle": "-", "color": 'tab:cyan'})
-ax3.annotate('Turki', xy=(2020, 19),
-             xytext=(2020, 24),
-             fontweight="bold", fontsize=12, color='tab:gray', va="center",
-             arrowprops={"arrowstyle": "-", "color": 'tab:gray'})
-ax3.annotate('World', xy=(2021, 13),
-             xytext=(2023, 11),
-             fontweight="bold", fontsize=12, color='tab:red', va="center",
-             arrowprops={"arrowstyle": "-", "color": 'tab:red'})
-
+df3_.groupby(['Year', 'Entity'])['%Renewable'].sum().unstack().plot(kind='line', ax=ax3, marker='.', color=colors3)
+df3_1_country = df3_['Entity'].unique()
+x1 = [2020, 2020, 2020, 2020, 2021]
+y1 = [86, 10, 71, 19, 13]
+x2 = [2020, 2020, 2020, 2020, 2023]
+y2 = [93, 1, 65, 24, 11]
+for i, anno in enumerate(df3_1_country):
+    ax3.annotate(df3_1_country[i], xy=(x1[i], y1[i]), xytext=(x2[i], y2[i]),
+                 fontweight="bold", fontsize=12, color=colors3[i],
+                 va="center", arrowprops={"arrowstyle": "-", "color": colors3[i]})
 plt.title('Besaran Persentase Penggunaan Energi Terbarukan', loc='center', pad=30, fontsize=20, color='blue')
 ax3.set_xlabel('Tahun', fontsize=13.5)
 ax3.set_ylabel('Konsumsi Energi Terbarukan/\nKonsumsi Seluruh Energi (%)\n', fontsize=13.5)
@@ -317,96 +284,43 @@ df4.rename({'Country/area': 'Country', 'Public Flows (2020 USD M)': 'Public Flow
 df4['Country_Code'] = 3  # untuk luas scatter
 df4.loc[df4.Country == 'Brazil', 'Country_Code'] = 30  # untuk luas scatter
 df4.loc[df4.Country == 'Indonesia', 'Country_Code'] = 35  # untuk luas scatter
-# df4 = df4[df4['Technology'].str.contains("Coal and Peat|Fossil fuels n.e.s.
-# |Oil|Non-renewable municipal waste|Nuclear") == False]
 
-fig4_1, ax4_1 = plt.subplots(1, 1, figsize=(7, 4))
-fig4_2, ax4_2 = plt.subplots(1, 1, figsize=(7, 4))
-fig4_3, ax4_3 = plt.subplots(1, 1, figsize=(7, 4))
-fig4_4, ax4_4 = plt.subplots(1, 1, figsize=(7, 4))
-fig4_5, ax4_5 = plt.subplots(1, 1, figsize=(7, 4))
-fig4_6, ax4_6 = plt.subplots(1, 1, figsize=(7, 4))
-# (ax4_1, ax4_2, ax4_3, ax4_4, ax4_5, ax4_6) = axs4
 colors4 = {3: 'black', 30: 'red', 35: 'blue'}
+tech4 = ['Solar photovoltaic', 'Onshore wind energy', 'Renewable hydropower', 'Geothermal energy',
+         'Renewable municipal waste', 'Multiple renewables']
 
-ax4_1.scatter(x=df4.loc[df4['Technology'] == 'Solar photovoltaic', ['Year']],
-              y=df4.loc[df4['Technology'] == 'Solar photovoltaic', ['Public Flows']],
-              s=df4.loc[df4['Technology'] == 'Solar photovoltaic', ['Country_Code']],
-              color=df4.loc[df4['Technology'] == 'Solar photovoltaic', ['Country_Code']].squeeze().map(colors4))
-ax4_1.set_title('Solar photovoltaic', fontsize=13)
-ax4_1.xaxis.set_major_locator(MaxNLocator(integer=True))
-ax4_2.scatter(x=df4.loc[df4['Technology'] == 'Onshore wind energy', ['Year']],
-              y=df4.loc[df4['Technology'] == 'Onshore wind energy', ['Public Flows']],
-              s=df4.loc[df4['Technology'] == 'Onshore wind energy', ['Country_Code']],
-              color=df4.loc[df4['Technology'] == 'Onshore wind energy', ['Country_Code']].squeeze().map(colors4))
-ax4_2.set_title('Onshore wind energy', fontsize=13)
-ax4_2.xaxis.set_major_locator(MaxNLocator(integer=True))
-ax4_3.scatter(x=df4.loc[df4['Technology'] == 'Renewable hydropower', ['Year']],
-              y=df4.loc[df4['Technology'] == 'Renewable hydropower', ['Public Flows']],
-              s=df4.loc[df4['Technology'] == 'Renewable hydropower', ['Country_Code']],
-              color=df4.loc[df4['Technology'] == 'Renewable hydropower', ['Country_Code']].squeeze().map(colors4))
-ax4_3.set_title('Renewable hydropower', fontsize=13)
-ax4_3.xaxis.set_major_locator(MaxNLocator(integer=True))
-ax4_4.scatter(x=df4.loc[df4['Technology'] == 'Geothermal energy', ['Year']],
-              y=df4.loc[df4['Technology'] == 'Geothermal energy', ['Public Flows']],
-              s=df4.loc[df4['Technology'] == 'Geothermal energy', ['Country_Code']],
-              color=df4.loc[df4['Technology'] == 'Geothermal energy', ['Country_Code']].squeeze().map(colors4))
-ax4_4.set_title('Geothermal energy', fontsize=13)
-ax4_4.xaxis.set_major_locator(MaxNLocator(integer=True))
-ax4_5.scatter(x=df4.loc[df4['Technology'] == 'Renewable municipal waste', ['Year']],
-              y=df4.loc[df4['Technology'] == 'Renewable municipal waste', ['Public Flows']],
-              s=df4.loc[df4['Technology'] == 'Renewable municipal waste', ['Country_Code']],
-              color=df4.loc[df4['Technology'] == 'Renewable municipal waste', ['Country_Code']].squeeze().map(colors4))
-ax4_5.set_title('Renewable municipal waste', fontsize=13)
-ax4_5.xaxis.set_major_locator(MaxNLocator(integer=True))
-ax4_6.scatter(x=df4.loc[df4['Technology'] == 'Multiple renewables', ['Year']],
-              y=df4.loc[df4['Technology'] == 'Multiple renewables', ['Public Flows']],
-              s=df4.loc[df4['Technology'] == 'Multiple renewables', ['Country_Code']],
-              color=df4.loc[df4['Technology'] == 'Multiple renewables', ['Country_Code']].squeeze().map(colors4))
-ax4_6.set_title('Other', fontsize=11)
-ax4_6.xaxis.set_major_locator(MaxNLocator(integer=True))
-# handles, labels = [(a + b) for a, b in zip(axs4.get_legend_handles_labels(), axs2.get_legend_handles_labels())]
-fig4_1.legend(['Legend:\nMerah = Brazil\nBiru = Indonesia'], loc=(0.79, 0.8), fontsize=8)
-fig4_2.legend(['Legend:\nMerah = Brazil\nBiru = Indonesia'], loc=(0.79, 0.8), fontsize=8)
-fig4_3.legend(['Legend:\nMerah = Brazil\nBiru = Indonesia'], loc=(0.79, 0.8), fontsize=8)
-fig4_4.legend(['Legend:\nMerah = Brazil\nBiru = Indonesia'], loc=(0.79, 0.8), fontsize=8)
-fig4_5.legend(['Legend:\nMerah = Brazil\nBiru = Indonesia'], loc=(0.79, 0.8), fontsize=8)
-fig4_6.legend(['Legend:\nMerah = Brazil\nBiru = Indonesia'], loc=(0.79, 0.8), fontsize=8)
-fig4_1.suptitle("Besaran Pergerakan Capital\nEnergi Terbarukan", fontsize=18)
-fig4_2.suptitle("Besaran Pergerakan Capital\nEnergi Terbarukan\n", fontsize=18)
-fig4_3.suptitle("Besaran Pergerakan Capital\nEnergi Terbarukan\n", fontsize=18)
-fig4_4.suptitle("Besaran Pergerakan Capital\nEnergi Terbarukan\n", fontsize=18)
-fig4_5.suptitle("Besaran Pergerakan Capital\nEnergi Terbarukan\n", fontsize=18)
-fig4_6.suptitle("Besaran Pergerakan Capital\nEnergi Terbarukan\n", fontsize=18)
-fig4_1.supylabel('Nilai Capital / Investasi\n(USD juta)', fontsize=16, ha='center')
-fig4_2.supylabel('Nilai Capital / Investasi\n(USD juta)', fontsize=16, ha='center')
-fig4_3.supylabel('Nilai Capital / Investasi\n(USD juta)', fontsize=16, ha='center')
-fig4_4.supylabel('Nilai Capital / Investasi\n(USD juta)', fontsize=16, ha='center')
-fig4_5.supylabel('Nilai Capital / Investasi\n(USD juta)', fontsize=16, ha='center')
-fig4_6.supylabel('Nilai Capital / Investasi\n(USD juta)', fontsize=16, ha='center')
-fig4_1.supxlabel('Sumber: https://pxweb.irena.org/pxweb/en/IRENASTAT, akses: 8 Oct 22', x=0.35, y=0.02, size=10)
-fig4_2.supxlabel('Sumber: https://pxweb.irena.org/pxweb/en/IRENASTAT, akses: 8 Oct 22', x=0.35, y=0.02, size=10)
-fig4_3.supxlabel('Sumber: https://pxweb.irena.org/pxweb/en/IRENASTAT, akses: 8 Oct 22', x=0.35, y=0.02, size=10)
-fig4_4.supxlabel('Sumber: https://pxweb.irena.org/pxweb/en/IRENASTAT, akses: 8 Oct 22', x=0.35, y=0.02, size=10)
-fig4_5.supxlabel('Sumber: https://pxweb.irena.org/pxweb/en/IRENASTAT, akses: 8 Oct 22', x=0.35, y=0.02, size=10)
-fig4_6.supxlabel('Sumber: https://pxweb.irena.org/pxweb/en/IRENASTAT, akses: 8 Oct 22', x=0.35, y=0.02, size=10)
-fig4_1.tight_layout()
-fig4_2.tight_layout()
-fig4_3.tight_layout()
-fig4_4.tight_layout()
-fig4_5.tight_layout()
-fig4_6.tight_layout()
-# st.pyplot(fig4)
 
-tab4_1, tab4_2, tab4_3, tab4_4, tab4_5, tab4_6 = st.tabs(["Energi Surya", "Energi Angin",
+def figure4(tech):
+    fig, axs = plt.subplots(1, 1, figsize=(7, 4))
+    axs.scatter(x=df4.loc[df4['Technology'] == tech, ['Year']],
+                y=df4.loc[df4['Technology'] == tech, ['Public Flows']],
+                s=df4.loc[df4['Technology'] == tech, ['Country_Code']],
+                color=df4.loc[df4['Technology'] == tech, ['Country_Code']].squeeze().map(colors4))
+    axs.set_title(tech, fontsize=13)
+    axs.xaxis.set_major_locator(MaxNLocator(integer=True))
+    fig.legend(['Legend:\nMerah = Brazil\nBiru = Indonesia'], loc=(0.79, 0.8), fontsize=8)
+    fig.suptitle("Besaran Pergerakan Capital\nEnergi Terbarukan", fontsize=18)
+    fig.supylabel('Nilai Capital / Investasi\n(USD juta)', fontsize=16, ha='center')
+    fig.supxlabel('Sumber: https://pxweb.irena.org/pxweb/en/IRENASTAT, akses: 8 Oct 22', x=0.35, y=0.02, size=10)
+    fig.tight_layout()
+    st.pyplot(fig)
+
+
+tab4_0, tab4_1, tab4_2, tab4_3, tab4_4, tab4_5 = st.tabs(["Energi Surya", "Energi Angin",
                                                           'Energi Air', 'Energi Geothermal',
                                                           'Energi Limbah', 'Lainnya'])
-tab4_1.pyplot(fig4_1)
-tab4_2.pyplot(fig4_2)
-tab4_3.pyplot(fig4_3)
-tab4_4.pyplot(fig4_4)
-tab4_5.pyplot(fig4_5)
-tab4_6.pyplot(fig4_6)
+with tab4_0:
+    figure4(tech4[0])
+with tab4_1:
+    figure4(tech4[1])
+with tab4_2:
+    figure4(tech4[2])
+with tab4_3:
+    figure4(tech4[3])
+with tab4_4:
+    figure4(tech4[4])
+with tab4_5:
+    figure4(tech4[5])
 
 st.markdown('Jika dibandingkan dengan negara Brazil, salah satu negara yang serius dalam mengembangkan '
             'energi terbarukan, Indonesia masih dibawah Brazil dalam public flow untuk renewable energy. '
