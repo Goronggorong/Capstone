@@ -1,7 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MaxNLocator
-# import plotly.express as px
+# from matplotlib.ticker import MaxNLocator
+# import seaborn as sns
+from plotly import express as px
 # import plotly.graph_objects as go
 import streamlit as st
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode
@@ -118,7 +119,7 @@ st.markdown("Melansir dari Handbook of Energy & Economic Statistics of Indonesia
 # Ambil Data dan Tabel ------------> Gambar 2
 df2 = pd.read_csv('primary_energy_source_bar.csv')
 df2 = df2[(df2['Year'] >= 2000)]  # lebih besar dari tahun 2000
-df2_1 = df2[(df2['Entity'] == 'Indonesia')].tail(10).reset_index().drop(['index', 'Code'], axis=1)
+# df2_1 = df2[(df2['Entity'] == 'Indonesia')].tail(10).reset_index().drop(['index', 'Code'], axis=1)
 
 # ------------------------------------------------------------------------------------------------------
 st.markdown('Pembagian jenis energi yang digunakan oleh Indonesia dapat dilihat pada tabel di bawah ini. '
@@ -163,56 +164,55 @@ st.markdown('Dari gambar di bawah ini, jika dibandingkan dengan negara lain, kon
             'negara dapat dilihat pada gambar di bawah ini, dimana Indonesia ditandai dengan warna biru.')
 
 # ------------------------------------------------------------------------------------------------------
-df2['Country_Code'] = 0.4  # untuk area scatter
-df2.loc[df2.Entity == 'Indonesia', 'Country_Code'] = 15
-df2['Entity'] = df2['Entity'].astype('string')
-print(df2.tail())
+df2['Country_Code'] = 1  # untuk area scatter
+df2.loc[df2.Entity == 'Indonesia', 'Country_Code'] = 30
+# df2['Entity'] = df2['Entity'].astype('string')
 discard2 = ["World", "High-income countries", "Non-OECD (BP)", "OECD (BP)", "Asia", "Asia Pacific (BP)",
             "Upper-middle-income countries", "North America", "North America (BP)", "Europe",
             "European Union (27)", "Lower-middle-income countries", "Middle East (BP)",
             "South and Central America (BP)", "South America", "CIS (BP)", "Africa (BP)", "Africa",
             "Other Africa (BP)"]
 df2_ = df2[~df2.Entity.str.contains('|'.join(discard2))]
-colors2 = {0.4: 'gray', 15: 'blue'}
-area2 = df2_['Country_Code']
+colors2 = {1: 'Lainnya', 30: 'Indonesia'}
 type2 = ['Coal Consumption - TWh', 'Oil Consumption - TWh', 'Gas Consumption - TWh', 'Hydro Consumption - TWh',
          'Wind Consumption - TWh', 'Solar Consumption - TWh', 'Geo Biomass Other - TWh']
 title2 = ['Coal', 'Oil', 'Gas', 'Hydro', 'Wind', 'Solar', 'Other']
 
 
 def figure2(tipe2, title):
-    fig, axs = plt.subplots(1, 1, figsize=(7, 4))
-    axs.scatter(x=df2_['Year'],
-                y=df2_[tipe2],
-                s=area2,
-                color=df2_['Country_Code'].map(colors2))
-    axs.set_title(title, fontsize=13)
-    axs.xaxis.set_major_locator(MaxNLocator(integer=True))
-    fig.legend(['Legend:\nBiru = Indonesia'], loc=(0.79, 0.8), fontsize=8)
-    fig.suptitle("Energi yang Dikonsumsi Berdasarkan Jenis Sumber Daya", fontsize=14)
-    fig.supylabel('Jumlah Energi (TeraWatthour)', fontsize=12, ha='center')
-    fig.supxlabel('Tahun\n\n'
-                  'Sumber: https://ourworldindata.org/energy, akses: 24 Sep 22', x=0.5, y=0.02, size=10)
-    fig.tight_layout()
-    st.pyplot(fig)
+    fig = px.scatter(data_frame=df2_,
+                     x='Year',
+                     y=tipe2,
+                     size='Country_Code',
+                     color=df2_['Country_Code'].map(colors2)
+                     )
+    fig.update_layout(
+        title={
+            'text': 'Energi yang Dikonsumsi Berdasarkan Jenis Sumber Daya<br>' + title,
+            'x': 0.5,
+            'xanchor': 'center',
+            'y': 0.95,
+            'yanchor': 'top'
+        },
+        title_font_color="lightblue",
+        xaxis_title='Tahun',
+        yaxis_title="Jumlah Konsumsi - TWh",
+        legend_title='Negara'
+    )
+    config = {'displaylogo': False,
+              'modeBarButtonsToRemove': ['zoom'],
+              'scrollZoom': True}
+    fig.update_traces(hovertemplate='<br>Tahun: %{x}<br>Konsumsi: %{y} TWh')  # Negara: ' + df2_['Entity'] + '
+    st.plotly_chart(fig, config=config)
 
 
 tab2_0, tab2_1, tab2_2, tab2_3, tab2_4, tab2_5, tab2_6 = st.tabs(["Batubara", "Minyak", 'Gas', 'Air',
                                                                   'Angin', 'Surya', 'Lainnya'])
-with tab2_0:
-    figure2(type2[0], title2[0])
-with tab2_1:
-    figure2(type2[1], title2[1])
-with tab2_2:
-    figure2(type2[2], title2[2])
-with tab2_3:
-    figure2(type2[3], title2[3])
-with tab2_4:
-    figure2(type2[4], title2[4])
-with tab2_5:
-    figure2(type2[5], title2[5])
-with tab2_6:
-    figure2(type2[6], title2[6])
+
+tabs2 = [tab2_0, tab2_1, tab2_2, tab2_3, tab2_4, tab2_5, tab2_6]
+for i in range(0, 7):
+    with tabs2[i]:
+        figure2(type2[i], title2[i])
 
 # ------------------------------------------------------------------------------------------------------
 st.markdown('Energi yang digunakan dan dikonsumsi Indonesia memang terlihat tidak besar dibandingkan negara '
@@ -285,42 +285,44 @@ df4['Country_Code'] = 3  # untuk luas scatter
 df4.loc[df4.Country == 'Brazil', 'Country_Code'] = 30  # untuk luas scatter
 df4.loc[df4.Country == 'Indonesia', 'Country_Code'] = 35  # untuk luas scatter
 
-colors4 = {3: 'black', 30: 'red', 35: 'blue'}
+colors4 = {3: 'Lainnya', 30: 'Brazil', 35: 'Indonesia'}
 tech4 = ['Solar photovoltaic', 'Onshore wind energy', 'Renewable hydropower', 'Geothermal energy',
          'Renewable municipal waste', 'Multiple renewables']
 
 
 def figure4(tech):
-    fig, axs = plt.subplots(1, 1, figsize=(7, 4))
-    axs.scatter(x=df4.loc[df4['Technology'] == tech, ['Year']],
-                y=df4.loc[df4['Technology'] == tech, ['Public Flows']],
-                s=df4.loc[df4['Technology'] == tech, ['Country_Code']],
-                color=df4.loc[df4['Technology'] == tech, ['Country_Code']].squeeze().map(colors4))
-    axs.set_title(tech, fontsize=13)
-    axs.xaxis.set_major_locator(MaxNLocator(integer=True))
-    fig.legend(['Legend:\nMerah = Brazil\nBiru = Indonesia'], loc=(0.79, 0.8), fontsize=8)
-    fig.suptitle("Besaran Pergerakan Capital\nEnergi Terbarukan", fontsize=18)
-    fig.supylabel('Nilai Capital / Investasi\n(USD juta)', fontsize=16, ha='center')
-    fig.supxlabel('Sumber: https://pxweb.irena.org/pxweb/en/IRENASTAT, akses: 8 Oct 22', x=0.35, y=0.02, size=10)
-    fig.tight_layout()
-    st.pyplot(fig)
+    # fig, axs = plt.subplots(1, 1, figsize=(7, 4))
+    fig = px.scatter(data_frame=df4.loc[df4['Technology'] == tech],
+                     x='Year',
+                     y='Public Flows',
+                     size='Country_Code',
+                     color=df4.loc[df4['Technology'] == tech, ['Country_Code']].squeeze().map(colors4))
+    fig.update_layout(
+        title={
+            'text': 'Besaran Pergerakan Capital Energi Terbarukan',
+            'x': 0.5,
+            'xanchor': 'center',
+            'y': 0.95,
+            'yanchor': 'top'},
+        title_font_color="lightblue",
+        xaxis_title='Tahun',
+        yaxis_title="Nilai Capital Public Flows<br>(USD Juta)",
+        legend_title='Negara'
+    )
+    config = {'displaylogo': False,
+              'modeBarButtonsToRemove': ['zoom'],
+              'scrollZoom': True}
+    fig.update_traces(hovertemplate='Tahun: %{x}<br>Nilai Public Flow: USD %{y} juta')
+    st.plotly_chart(fig, config=config)
 
 
 tab4_0, tab4_1, tab4_2, tab4_3, tab4_4, tab4_5 = st.tabs(["Energi Surya", "Energi Angin",
                                                           'Energi Air', 'Energi Geothermal',
                                                           'Energi Limbah', 'Lainnya'])
-with tab4_0:
-    figure4(tech4[0])
-with tab4_1:
-    figure4(tech4[1])
-with tab4_2:
-    figure4(tech4[2])
-with tab4_3:
-    figure4(tech4[3])
-with tab4_4:
-    figure4(tech4[4])
-with tab4_5:
-    figure4(tech4[5])
+tabs4 = [tab4_0, tab4_1, tab4_2, tab4_3, tab4_4, tab4_5]
+for i in range(0, 6):
+    with tabs4[i]:
+        figure4(tech4[i])
 
 st.markdown('Jika dibandingkan dengan negara Brazil, salah satu negara yang serius dalam mengembangkan '
             'energi terbarukan, Indonesia masih dibawah Brazil dalam public flow untuk renewable energy. '
